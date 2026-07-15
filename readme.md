@@ -1,4 +1,10 @@
-# AngularJS and Spring Boot version of the Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs.svg?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-angularjs/)
+# AngularJS and Spring Boot version of the Spring PetClinic Sample Application
+
+AngularJS 1 frontend with a Spring Boot 3 / Java 21 backend.
+
+## Requirements
+- JDK 21+
+- The Maven wrapper (`./mvnw`) is provided; no local Maven install is required.
 
 ## Understanding the Spring Petclinic application with a few diagrams
 [See the presentation here](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
