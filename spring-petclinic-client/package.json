@@ -1,11 +1,20 @@
 {
+  "name": "spring-petclinic-client",
+  "description": "Spring Petclinic AngularJS client application",
+  "version": "3.3.5",
   "private": true,
-  "dependencies": {},
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@uirouter/angularjs": "1.0.30",
+    "angular": "1.8.3",
+    "bootstrap": "3.4.1",
+    "jquery": "3.7.1"
+  },
   "devDependencies": {
-    "bower": "^1.7.9",
-    "gulp": "^3.9.1",
-    "gulp-clean-css": "^2.0.6",
-    "gulp-uglify": "^1.5.3",
-    "gulp-less": "^3.1.0"
+    "esbuild": "0.21.5",
+    "fast-glob": "3.3.2"
   }
 }
