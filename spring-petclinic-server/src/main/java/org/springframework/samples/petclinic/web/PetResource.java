@@ -25,7 +25,7 @@ import org.springframework.samples.petclinic.model.PetType;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 import java.util.Collection;
 import java.util.Date;
