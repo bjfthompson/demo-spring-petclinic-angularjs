@@ -27,8 +27,11 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Juergen Hoeller
@@ -87,6 +90,24 @@ public class PetResource extends AbstractResourceController {
     public PetDetails findPet(@PathVariable("petId") int petId) {
         Pet pet = this.clinicService.findPetById(petId);
         return new PetDetails(pet);
+    }
+
+    @GetMapping("/api/pets/search")
+    public Collection<PetDetails> searchPets(@RequestParam(value = "name", required = false) String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        String term = name.trim().toLowerCase();
+        List<PetDetails> matches = new ArrayList<>();
+        for (Owner owner : clinicService.findAll()) {
+            for (Pet pet : owner.getPets()) {
+                if (pet.getName() != null && pet.getName().toLowerCase().contains(term)) {
+                    matches.add(new PetDetails(pet));
+                }
+            }
+        }
+        return matches;
     }
 
     static class PetRequest {
