@@ -28,6 +28,43 @@ const minify = (code, loader) =>
 
 const concat = (files) => files.map((f) => fs.readFileSync(f, 'utf8')).join('\n;\n');
 
+/*
+ * AngularJS distinguishes `angular.module('x', [deps])` (defines) from
+ * `angular.module('x')` (retrieves), so a module must be defined before it is
+ * retrieved. Each feature folder keeps its definition in <folder>/<folder>.js,
+ * which therefore has to be concatenated ahead of the rest of that folder.
+ */
+const orderAppFiles = (files) => {
+  const definesModule = (file) => path.basename(file) === `${path.basename(path.dirname(file))}.js`;
+  return files.sort((a, b) => {
+    const dirA = path.dirname(a);
+    const dirB = path.dirname(b);
+    if (dirA !== dirB) return dirA < dirB ? -1 : 1;
+    if (definesModule(a) !== definesModule(b)) return definesModule(a) ? -1 : 1;
+    return a < b ? -1 : 1;
+  });
+};
+
+// Fails the build if a module is retrieved before it is defined, which would
+// otherwise only surface at runtime as [$injector:nomod] on a blank page.
+const assertModuleOrder = (files) => {
+  const defined = new Set();
+  for (const file of files) {
+    const source = fs.readFileSync(file, 'utf8');
+    for (const [, name] of source.matchAll(/angular\.module\(\s*['"]([\w.-]+)['"]\s*\)/g)) {
+      if (!defined.has(name)) {
+        throw new Error(
+          `${path.relative(root, file)} uses angular.module('${name}') before it is defined; ` +
+            'fix the bundle order in orderAppFiles().'
+        );
+      }
+    }
+    for (const [, name] of source.matchAll(/angular\.module\(\s*['"]([\w.-]+)['"]\s*,/g)) {
+      defined.add(name);
+    }
+  }
+};
+
 async function build() {
   fs.rmSync(dist, { recursive: true, force: true });
   ensureDir(path.join(dist, 'scripts'));
@@ -46,13 +83,12 @@ async function build() {
 
   // App bundle (app.js first so the root module is defined before feature modules).
   const appEntry = path.join(root, 'src', 'scripts', 'app.js');
-  const appFiles = (await fg('src/scripts/**/*.js', { cwd: root, absolute: true }))
-    .filter((f) => f !== appEntry)
-    .sort();
-  fs.writeFileSync(
-    path.join(dist, 'scripts', 'app.min.js'),
-    await minify(concat([appEntry, ...appFiles]), 'js')
+  const featureFiles = (await fg('src/scripts/**/*.js', { cwd: root, absolute: true })).filter(
+    (f) => f !== appEntry
   );
+  const appFiles = [appEntry, ...orderAppFiles(featureFiles)];
+  assertModuleOrder(appFiles);
+  fs.writeFileSync(path.join(dist, 'scripts', 'app.min.js'), await minify(concat(appFiles), 'js'));
 
   // Component templates (referenced via templateUrl relative to the app root).
   for (const rel of await fg('src/scripts/**/*.html', { cwd: root })) {
