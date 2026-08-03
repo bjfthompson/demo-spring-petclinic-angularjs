@@ -1,5 +1,15 @@
 'use strict';
 /* App Module */
+
+// Layout modules must exist before petClinicApp declares them as dependencies.
+['welcome', 'nav', 'footer'].forEach(function(c) {
+    var mod = 'layout' + c.toUpperCase().substring(0, 1) + c.substring(1);
+    angular.module(mod, []);
+    angular.module(mod).component(mod, {
+        templateUrl: "scripts/fragments/" + c + ".html"
+    });
+});
+
 var petClinicApp = angular.module('petClinicApp', [
     'ui.router', 'infrastructure', 'layoutNav', 'layoutFooter', 'layoutWelcome',
     'ownerList', 'ownerDetails', 'ownerForm', 'petForm', 'visits', 'upcomingVisits', 'vetList']);
@@ -26,11 +36,3 @@ petClinicApp.config(['$stateProvider', '$urlRouterProvider', '$locationProvider'
             template: '<layout-welcome></layout-welcome>'
         });
 }]);
-
-['welcome', 'nav', 'footer'].forEach(function(c) {
-    var mod = 'layout' + c.toUpperCase().substring(0, 1) + c.substring(1);
-    angular.module(mod, []);
-    angular.module(mod).component(mod, {
-        templateUrl: "scripts/fragments/" + c + ".html"
-    });
-});

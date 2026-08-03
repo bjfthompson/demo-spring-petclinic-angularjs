@@ -38,7 +38,7 @@
             <th>Date</th>
             <th>Pet</th>
             <th>Owner</th>
-            <th>Nature of Visit</th>
+            <th class="hidden-xs">Nature of Visit</th>
         </tr>
         </thead>
         <tbody>
@@ -47,11 +47,12 @@
             <td>
                 <a ui-sref="ownerDetails({ ownerId: visit.ownerId })"
                    title="View pet record for {{visit.petName}}">{{visit.petName}}</a>
+                <div class="visible-xs text-muted" style="margin-top: 0.25em;">{{visit.description}}</div>
             </td>
             <td>
                 <a ui-sref="ownerDetails({ ownerId: visit.ownerId })">{{visit.ownerName}}</a>
             </td>
-            <td>{{visit.description}}</td>
+            <td class="hidden-xs">{{visit.description}}</td>
         </tr>
         </tbody>
     </table>

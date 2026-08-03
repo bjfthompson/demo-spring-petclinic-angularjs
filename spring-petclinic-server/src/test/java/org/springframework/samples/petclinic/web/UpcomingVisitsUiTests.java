@@ -27,7 +27,7 @@ public class UpcomingVisitsUiTests {
         assertThat(template).contains("visit.petName");
         assertThat(template).contains("visit.ownerName");
         assertThat(template).contains("visit.description");
-        assertThat(template).contains("visit.date");
+        assertThat(template).contains("visible-xs");
         assertThat(template).contains("ownerDetails({ ownerId: visit.ownerId })");
         assertThat(template).contains("No upcoming visits match the selected criteria.");
         assertThat(template).contains("table-responsive");

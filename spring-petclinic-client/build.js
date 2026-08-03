@@ -44,14 +44,25 @@ async function build() {
     await minify(concat(vendorFiles), 'js')
   );
 
-  // App bundle (app.js first so the root module is defined before feature modules).
+  // App bundle: feature modules first, app.js last so Angular dependencies exist
+  // before petClinicApp is declared. Module definition files (*feature*.js) before
+  // .component.js / .controller.js getters.
   const appEntry = path.join(root, 'src', 'scripts', 'app.js');
+  const fileRank = (f) => {
+    if (f.endsWith('.controller.js')) {
+      return 2;
+    }
+    if (f.endsWith('.component.js')) {
+      return 1;
+    }
+    return 0;
+  };
   const appFiles = (await fg('src/scripts/**/*.js', { cwd: root, absolute: true }))
     .filter((f) => f !== appEntry)
-    .sort();
+    .sort((a, b) => fileRank(a) - fileRank(b) || a.localeCompare(b));
   fs.writeFileSync(
     path.join(dist, 'scripts', 'app.min.js'),
-    await minify(concat([appEntry, ...appFiles]), 'js')
+    await minify(concat([...appFiles, appEntry]), 'js')
   );
 
   // Component templates (referenced via templateUrl relative to the app root).
