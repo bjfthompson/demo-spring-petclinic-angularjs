@@ -3,7 +3,7 @@
 /**
  * Global HTTP errors handler.
  */
-angular.module('infrastructure')
+angular.module('infrastructure', [])
     .factory('HttpErrorHandlingInterceptor', function () {
         return {
             responseError: function (response) {

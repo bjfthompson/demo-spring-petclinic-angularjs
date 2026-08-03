@@ -26,7 +26,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.cache.annotation.CacheResult;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Mostly used as a facade for all Petclinic controllers
@@ -100,5 +104,58 @@ public class ClinicServiceImpl implements ClinicService {
         return vetRepository.findAll();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Visit> findUpcomingVisits(int days, String nameFilter) throws DataAccessException {
+        Date start = startOfDay(new Date());
+        Date end = startOfDay(addDays(start, days));
+        List<Visit> visits = visitRepository.findByDateBetween(start, end);
+        if (nameFilter == null || nameFilter.trim().isEmpty()) {
+            return visits;
+        }
+        String term = nameFilter.trim().toLowerCase();
+        List<Visit> matches = new ArrayList<>();
+        for (Visit visit : visits) {
+            if (matchesName(visit, term)) {
+                matches.add(visit);
+            }
+        }
+        return matches;
+    }
+
+    private static boolean matchesName(Visit visit, String term) {
+        Pet pet = visit.getPet();
+        if (pet == null) {
+            return false;
+        }
+        if (pet.getName() != null && pet.getName().toLowerCase().contains(term)) {
+            return true;
+        }
+        Owner owner = pet.getOwner();
+        if (owner == null) {
+            return false;
+        }
+        String first = owner.getFirstName() != null ? owner.getFirstName().toLowerCase() : "";
+        String last = owner.getLastName() != null ? owner.getLastName().toLowerCase() : "";
+        String full = (first + " " + last).trim();
+        return first.contains(term) || last.contains(term) || full.contains(term);
+    }
+
+    private static Date startOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    private static Date addDays(Date date, int days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, days);
+        return calendar.getTime();
+    }
 
 }

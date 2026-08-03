@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.samples.petclinic.model.Owner;
 import org.springframework.samples.petclinic.model.Pet;
@@ -46,5 +47,11 @@ public interface ClinicService {
     void saveOwner(Owner owner);
 
     Collection<Owner> findAll();
+
+    /**
+     * Upcoming visits from today through {@code days} days ahead (inclusive).
+     * Optional {@code nameFilter} matches pet or owner name (case-insensitive contains).
+     */
+    List<Visit> findUpcomingVisits(int days, String nameFilter);
 
 }

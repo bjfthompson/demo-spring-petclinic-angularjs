@@ -51,3 +51,10 @@ INSERT INTO visits VALUES (1, 7, '2013-01-01', 'rabies shot');
 INSERT INTO visits VALUES (2, 8, '2013-01-02', 'rabies shot');
 INSERT INTO visits VALUES (3, 8, '2013-01-03', 'neutered');
 INSERT INTO visits VALUES (4, 7, '2013-01-04', 'spayed');
+
+-- Upcoming visits (relative to CURRENT_DATE) for the upcoming-visits dashboard.
+INSERT INTO visits VALUES (5, 1, CURRENT_DATE, 'annual checkup');
+INSERT INTO visits VALUES (6, 7, CURRENT_DATE + 2 DAY, 'dental cleaning');
+INSERT INTO visits VALUES (7, 3, CURRENT_DATE + 5 DAY, 'vaccination booster');
+INSERT INTO visits VALUES (8, 8, CURRENT_DATE + 10 DAY, 'skin allergy follow-up');
+INSERT INTO visits VALUES (9, 2, CURRENT_DATE + 20 DAY, 'wellness exam');
