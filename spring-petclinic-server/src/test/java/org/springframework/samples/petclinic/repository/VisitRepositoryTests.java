@@ -28,15 +28,16 @@ public class VisitRepositoryTests {
 
         assertThat(visits).isNotEmpty();
         assertThat(visits).allSatisfy(visit -> {
-            assertThat(visit.getDate()).isAfterOrEqualTo(start);
-            assertThat(visit.getDate()).isBeforeOrEqualTo(end);
+            assertThat(visit.getDate().getTime()).isGreaterThanOrEqualTo(start.getTime());
+            assertThat(visit.getDate().getTime()).isLessThanOrEqualTo(end.getTime());
             assertThat(visit.getPet()).isNotNull();
             assertThat(visit.getPet().getOwner()).isNotNull();
             assertThat(visit.getPet().getName()).isNotBlank();
         });
 
         for (int i = 1; i < visits.size(); i++) {
-            assertThat(visits.get(i - 1).getDate()).isBeforeOrEqualTo(visits.get(i).getDate());
+            assertThat(visits.get(i - 1).getDate().getTime())
+                    .isLessThanOrEqualTo(visits.get(i).getDate().getTime());
         }
     }
 
@@ -47,7 +48,7 @@ public class VisitRepositoryTests {
 
         assertThat(visits).isNotEmpty();
         assertThat(visits).allSatisfy(visit ->
-                assertThat(startOfDay(visit.getDate())).isEqualTo(today));
+                assertThat(startOfDay(visit.getDate()).getTime()).isEqualTo(today.getTime()));
     }
 
     @Test
