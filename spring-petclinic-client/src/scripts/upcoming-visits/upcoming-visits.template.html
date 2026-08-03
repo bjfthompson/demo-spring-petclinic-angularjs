@@ -1,0 +1,64 @@
+<h2>Upcoming Visits</h2>
+
+<div class="row" style="margin-top: 1.5em;">
+    <div class="col-sm-7">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Visit date range filters">
+            <button type="button" class="btn"
+                    ng-class="{'btn-primary': $ctrl.days === 0, 'btn-default': $ctrl.days !== 0}"
+                    ng-click="$ctrl.setDays(0)">Today</button>
+            <button type="button" class="btn"
+                    ng-class="{'btn-primary': $ctrl.days === 7, 'btn-default': $ctrl.days !== 7}"
+                    ng-click="$ctrl.setDays(7)">Next 7 Days</button>
+            <button type="button" class="btn"
+                    ng-class="{'btn-primary': $ctrl.days === 30, 'btn-default': $ctrl.days !== 30}"
+                    ng-click="$ctrl.setDays(30)">Next 30 Days</button>
+        </div>
+    </div>
+    <div class="col-sm-5" style="margin-top: 0.75em;">
+        <form ng-submit="$ctrl.search()">
+            <div class="input-group">
+                <input type="text" class="form-control"
+                       placeholder="Search by pet or owner"
+                       ng-model="$ctrl.query"
+                       aria-label="Search by pet or owner name" />
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </span>
+            </div>
+            <button type="button" class="btn btn-link btn-sm" style="padding-left: 0;"
+                    ng-if="$ctrl.query" ng-click="$ctrl.clearSearch()">Clear search</button>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive" style="margin-top: 1.5em;">
+    <table class="table table-striped" ng-if="$ctrl.visits.length">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Pet</th>
+            <th>Owner</th>
+            <th>Nature of Visit</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="visit in $ctrl.visits track by visit.id">
+            <td>{{visit.date}}</td>
+            <td>
+                <a ui-sref="ownerDetails({ ownerId: visit.ownerId })"
+                   title="View pet record for {{visit.petName}}">{{visit.petName}}</a>
+            </td>
+            <td>
+                <a ui-sref="ownerDetails({ ownerId: visit.ownerId })">{{visit.ownerName}}</a>
+            </td>
+            <td>{{visit.description}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="alert alert-info" role="status"
+     ng-if="!$ctrl.loading && !$ctrl.visits.length"
+     style="margin-top: 1.5em;">
+    No upcoming visits match the selected criteria.
+</div>
